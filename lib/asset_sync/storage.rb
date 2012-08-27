@@ -104,13 +104,13 @@ module AssetSync
 
     def upload_file(f)
       # TODO output files in debug logs as asset filename only.
-      one_year = 31557600
+      cache_control = config.cache_control_for(f)
       file = {
         :key => f,
         :body => File.open("#{path}/#{f}"),
         :public => true,
-        :cache_control => "public, max-age=#{one_year}",
-        :expires => CGI.rfc1123_date(Time.now + one_year)
+        :cache_control => "public, max-age=#{cache_control}",
+        :expires => CGI.rfc1123_date(Time.now + cache_control)
       }
 
       gzipped = "#{path}/#{f}.gz"

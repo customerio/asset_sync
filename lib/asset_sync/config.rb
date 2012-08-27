@@ -7,6 +7,7 @@ module AssetSync
     # AssetSync
     attr_accessor :existing_remote_files # What to do with your existing remote files? (keep or delete)
     attr_accessor :gzip_compression
+    attr_accessor :cache_control
     attr_accessor :manifest
     attr_accessor :fail_silently
     attr_accessor :always_upload
@@ -45,6 +46,7 @@ module AssetSync
       self.fog_region = nil
       self.existing_remote_files = 'keep'
       self.gzip_compression = false
+      self.cache_control = 31557600 # one year
       self.manifest = false
       self.fail_silently = false
       self.always_upload = []
@@ -65,6 +67,14 @@ module AssetSync
 
     def existing_remote_files?
       ['keep', 'ignore'].include?(self.existing_remote_files)
+    end
+
+    def cache_control_for(file)
+      if cache_control.is_a?(Proc) 
+        cache_control.call(file)
+      else
+        cache_control
+      end
     end
 
     def aws?
